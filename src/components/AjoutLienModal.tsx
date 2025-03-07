@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Lien, Groupe } from '../types'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -62,16 +62,40 @@ export function AjoutLienModal({
       nouveauLien.description = description.trim()
     }
     
-    if (logo.trim()) {
-      nouveauLien.logo = logo.trim()
-    } else {
-      // Si aucun logo n'est fourni, utiliser le favicon du site
-      const domain = extractDomain(url.trim());
-      nouveauLien.logo = `${domain}/favicon.ico`;
-    }
+    // Icône par défaut en SVG pour les cas où le favicon n'existe pas (optimisée pour le mode dark)
+    const defaultIcon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1saW5rIj48cGF0aCBkPSJNMTAgMTNhNSA1IDAgMCAwIDcuNSAwTTkgMTFoMTAiLz48Y2lyY2xlIGN4PSI5IiBjeT0iMTIiIHI9IjIiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjEyIiByPSIyIi8+PC9zdmc+Jzs=';
     
-    onAjouter(groupeId, nouveauLien)
-    resetForm()
+    if (logo.trim()) {
+      // Utiliser le logo spécifié par l'utilisateur
+      nouveauLien.logo = logo.trim();
+      // Ajouter le lien directement quand un logo personnalisé est fourni
+      onAjouter(groupeId, nouveauLien);
+      resetForm();
+    } else {
+      // Si aucun logo n'est fourni, vérifier d'abord si le favicon existe
+      const domain = extractDomain(url.trim());
+      const faviconUrl = `${domain}/favicon.ico`;
+      
+      // Vérifier si le favicon existe avant d'ajouter le lien
+      const img = new Image();
+      
+      img.onload = () => {
+        // Le favicon existe, l'utiliser
+        nouveauLien.logo = faviconUrl;
+        onAjouter(groupeId, nouveauLien);
+        resetForm();
+      };
+      
+      img.onerror = () => {
+        // Le favicon n'existe pas, utiliser l'icône par défaut
+        nouveauLien.logo = defaultIcon;
+        onAjouter(groupeId, nouveauLien);
+        resetForm();
+      };
+      
+      // Démarrer le chargement de l'image pour vérification
+      img.src = faviconUrl;
+    }
   }
 
   const resetForm = () => {

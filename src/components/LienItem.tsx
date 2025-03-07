@@ -47,7 +47,7 @@ export function LienItem({ lien, onModifier, onSupprimer }: LienItemProps) {
               className="mt-1 flex-shrink-0" 
               style={{ display: lien.logo ? 'none' : 'block' }} 
             />
-            <div className="flex-1">
+            <div className="flex-1" title={lien.url}>
               <h3 className="font-medium text-sm">{lien.titre}</h3>
               {lien.description && (
                 <p className="text-xs text-muted-foreground">{lien.description}</p>
