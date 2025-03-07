@@ -41,7 +41,7 @@ export function AjoutLienModal({
     try {
       const parsedUrl = new URL(url);
       return `${parsedUrl.protocol}//${parsedUrl.hostname}`;
-    } catch (error) {
+    } catch {
       // Si l'URL n'est pas valide, retourner l'URL d'origine
       return url;
     }

@@ -21,6 +21,7 @@ export function HeaderApp({ onAjoutGroupe, onSearch, searchTerm }: HeaderAppProp
               placeholder="Rechercher..."
               className="pl-8 w-full"
               value={searchTerm}
+              type="search"
               onChange={(e) => onSearch(e.target.value)}
             />
           </div>

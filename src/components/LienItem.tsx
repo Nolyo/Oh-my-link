@@ -36,7 +36,9 @@ export function LienItem({ lien, onModifier, onSupprimer }: LienItemProps) {
                   // Remplace par une icône par défaut en cas d'erreur de chargement
                   e.currentTarget.src = '';
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextSibling.style.display = 'block';
+                  if (e.currentTarget.nextSibling) {
+                    (e.currentTarget.nextSibling as HTMLElement).style.display = 'block';
+                  }
                 }}
               />
             ) : null}
