@@ -1,4 +1,4 @@
-import { Groupe } from '../types';
+import { Groupe, Lien } from '../types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Plus, MoreVertical, Pencil, Trash2 } from 'lucide-react';
@@ -10,15 +10,52 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useState } from 'react';
+import { ModifierLienModal } from './ModifierLienModal';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface GroupeCardProps {
   groupe: Groupe;
   onAddLien?: () => void;
   onModifier?: (groupe: Groupe) => void;
   onSupprimer?: (groupe: Groupe) => void;
+  onModifierLien?: (groupeId: string, lienId: string, updates: Partial<Lien>) => void;
+  onSupprimerLien?: (groupeId: string, lienId: string) => void;
 }
 
-export function GroupeCard({ groupe, onAddLien, onModifier, onSupprimer }: GroupeCardProps) {
+export function GroupeCard({ 
+  groupe, 
+  onAddLien, 
+  onModifier, 
+  onSupprimer,
+  onModifierLien,
+  onSupprimerLien
+}: GroupeCardProps) {
+  const [lienAModifier, setLienAModifier] = useState<Lien | null>(null);
+  const [lienASupprimer, setLienASupprimer] = useState<Lien | null>(null);
+
+  const handleModifierLien = (lien: Lien) => {
+    setLienAModifier(lien);
+  };
+
+  const handleSupprimerLien = (lien: Lien) => {
+    setLienASupprimer(lien);
+  };
+
+  const confirmerModifierLien = (lienId: string, updates: Partial<Lien>) => {
+    if (onModifierLien) {
+      onModifierLien(groupe.id, lienId, updates);
+    }
+    setLienAModifier(null);
+  };
+
+  const confirmerSupprimerLien = () => {
+    if (lienASupprimer && onSupprimerLien) {
+      onSupprimerLien(groupe.id, lienASupprimer.id);
+      setLienASupprimer(null);
+    }
+  };
+
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -65,11 +102,36 @@ export function GroupeCard({ groupe, onAddLien, onModifier, onSupprimer }: Group
         ) : (
           <div className="space-y-2">
             {groupe.liens.map((lien) => (
-              <LienItem key={lien.id} lien={lien} />
+              <LienItem 
+                key={lien.id} 
+                lien={lien}
+                onModifier={handleModifierLien}
+                onSupprimer={handleSupprimerLien}
+              />
             ))}
           </div>
         )}
       </CardContent>
+
+      {/* Modal de modification de lien */}
+      <ModifierLienModal
+        isOpen={lienAModifier !== null}
+        onClose={() => setLienAModifier(null)}
+        onModifier={confirmerModifierLien}
+        lien={lienAModifier}
+      />
+
+      {/* Dialog de confirmation de suppression de lien */}
+      <ConfirmDialog
+        isOpen={lienASupprimer !== null}
+        onClose={() => setLienASupprimer(null)}
+        onConfirm={confirmerSupprimerLien}
+        title="Supprimer le lien"
+        description={`Êtes-vous sûr de vouloir supprimer le lien "${lienASupprimer?.titre}" ? Cette action ne peut pas être annulée.`}
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="destructive"
+      />
     </Card>
   );
 }

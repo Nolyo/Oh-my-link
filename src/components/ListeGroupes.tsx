@@ -1,4 +1,4 @@
-import { Groupe } from '../types';
+import { Groupe, Lien } from '../types';
 import { GroupeCard } from './GroupeCard';
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from '@hello-pangea/dnd';
 import { useState } from 'react';
@@ -11,6 +11,8 @@ interface ListeGroupesProps {
   onModifierGroupe: (id: string, updates: Partial<Groupe>) => void;
   onSupprimerGroupe: (id: string) => void;
   onAjouterLien?: (groupeId: string) => void;
+  onModifierLien?: (groupeId: string, lienId: string, updates: Partial<Lien>) => void;
+  onSupprimerLien?: (groupeId: string, lienId: string) => void;
 }
 
 export function ListeGroupes({ 
@@ -18,7 +20,9 @@ export function ListeGroupes({
   onUpdateGroupes,
   onModifierGroupe,
   onSupprimerGroupe,
-  onAjouterLien
+  onAjouterLien,
+  onModifierLien,
+  onSupprimerLien
 }: ListeGroupesProps) {
   const [groupeAModifier, setGroupeAModifier] = useState<Groupe | null>(null);
   const [groupeASupprimer, setGroupeASupprimer] = useState<Groupe | null>(null);
@@ -70,6 +74,8 @@ export function ListeGroupes({
                         onModifier={(g) => setGroupeAModifier(g)}
                         onSupprimer={(g) => setGroupeASupprimer(g)}
                         onAddLien={() => onAjouterLien?.(groupe.id)}
+                        onModifierLien={onModifierLien}
+                        onSupprimerLien={onSupprimerLien}
                       />
                     </div>
                   )}

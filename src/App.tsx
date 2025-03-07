@@ -4,8 +4,9 @@ import { ThemeProvider } from './components/theme-provider'
 import { ListeGroupes } from './components/ListeGroupes'
 import { HeaderApp } from './components/HeaderApp'
 import { AjoutGroupeModal } from './components/AjoutGroupeModal'
+import { AjoutLienModal } from './components/AjoutLienModal'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { AppData, Groupe } from './types'
+import { AppData, Groupe, Lien } from './types'
 import { v4 as uuidv4 } from 'uuid'
 
 const initialData: AppData = {
@@ -16,6 +17,7 @@ const initialData: AppData = {
 function App() {
   const [data, setData] = useLocalStorage<AppData>('bookmark-app-data', initialData)
   const [isAjoutGroupeOpen, setIsAjoutGroupeOpen] = useState(false)
+  const [isAjoutLienOpen, setIsAjoutLienOpen] = useState(false)
   const [groupeIdPourAjoutLien, setGroupeIdPourAjoutLien] = useState<string | null>(null)
   
   const handleAjouterGroupe = (groupe: Omit<Groupe, 'id' | 'ordre'>) => {
@@ -58,10 +60,67 @@ function App() {
   }
   
   const handleAjouterLien = (groupeId: string) => {
-    // Pour l'instant, on enregistre juste l'ID du groupe pour l'implémentation future
     setGroupeIdPourAjoutLien(groupeId)
-    // Cette fonction sera complétée plus tard pour ouvrir une modal d'ajout de lien
-    console.log(`Ajouter un lien au groupe: ${groupeId}`)
+    setIsAjoutLienOpen(true)
+  }
+  
+  const handleEnregistrerLien = (groupeId: string, nouveauLien: Lien) => {
+    const groupesModifies = data.groupes.map(groupe => {
+      if (groupe.id === groupeId) {
+        return {
+          ...groupe,
+          liens: [...(groupe.liens || []), nouveauLien]
+        }
+      }
+      return groupe
+    })
+    
+    setData({
+      ...data,
+      groupes: groupesModifies
+    })
+  }
+  
+  const handleModifierLien = (groupeId: string, lienId: string, updates: Partial<Lien>) => {
+    const groupesModifies = data.groupes.map(groupe => {
+      if (groupe.id === groupeId) {
+        const liensModifies = (groupe.liens || []).map(lien => 
+          lien.id === lienId 
+            ? { ...lien, ...updates } 
+            : lien
+        )
+        
+        return {
+          ...groupe,
+          liens: liensModifies
+        }
+      }
+      return groupe
+    })
+    
+    setData({
+      ...data,
+      groupes: groupesModifies
+    })
+  }
+  
+  const handleSupprimerLien = (groupeId: string, lienId: string) => {
+    const groupesModifies = data.groupes.map(groupe => {
+      if (groupe.id === groupeId) {
+        const liensFiltres = (groupe.liens || []).filter(lien => lien.id !== lienId)
+        
+        return {
+          ...groupe,
+          liens: liensFiltres
+        }
+      }
+      return groupe
+    })
+    
+    setData({
+      ...data,
+      groupes: groupesModifies
+    })
   }
   
   return (
@@ -76,6 +135,8 @@ function App() {
             onModifierGroupe={handleModifierGroupe}
             onSupprimerGroupe={handleSupprimerGroupe}
             onAjouterLien={handleAjouterLien}
+            onModifierLien={handleModifierLien}
+            onSupprimerLien={handleSupprimerLien}
           />
         </main>
         
@@ -84,6 +145,14 @@ function App() {
           isOpen={isAjoutGroupeOpen}
           onClose={() => setIsAjoutGroupeOpen(false)}
           onAjouter={handleAjouterGroupe}
+          groupes={data.groupes}
+        />
+        
+        <AjoutLienModal
+          isOpen={isAjoutLienOpen}
+          onClose={() => setIsAjoutLienOpen(false)}
+          onAjouter={handleEnregistrerLien}
+          groupeId={groupeIdPourAjoutLien}
           groupes={data.groupes}
         />
         
