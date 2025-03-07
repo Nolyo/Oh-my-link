@@ -1,7 +1,7 @@
 import { Groupe, Lien } from '../types';
 import { GroupeCard } from './GroupeCard';
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from '@hello-pangea/dnd';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ModifierGroupeModal } from './ModifierGroupeModal';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -13,6 +13,7 @@ interface ListeGroupesProps {
   onAjouterLien?: (groupeId: string) => void;
   onModifierLien?: (groupeId: string, lienId: string, updates: Partial<Lien>) => void;
   onSupprimerLien?: (groupeId: string, lienId: string) => void;
+  searchTerm?: string;
 }
 
 export function ListeGroupes({ 
@@ -22,7 +23,8 @@ export function ListeGroupes({
   onSupprimerGroupe,
   onAjouterLien,
   onModifierLien,
-  onSupprimerLien
+  onSupprimerLien,
+  searchTerm = ''
 }: ListeGroupesProps) {
   const [groupeAModifier, setGroupeAModifier] = useState<Groupe | null>(null);
   const [groupeASupprimer, setGroupeASupprimer] = useState<Groupe | null>(null);
@@ -43,10 +45,52 @@ export function ListeGroupes({
     onUpdateGroupes(updatedItems);
   };
 
+  const filteredGroupes = useMemo(() => {
+    if (!searchTerm) return groupes;
+    
+    const term = searchTerm.toLowerCase();
+    
+    return groupes.map(groupe => {
+      // Vérifier si le titre du groupe correspond
+      const groupeMatches = groupe.titre.toLowerCase().includes(term);
+      
+      // Filtrer les liens qui correspondent
+      const filteredLiens = (groupe.liens || []).filter(lien => 
+        lien.titre.toLowerCase().includes(term) || 
+        lien.url.toLowerCase().includes(term) || 
+        (lien.description || '').toLowerCase().includes(term)
+      );
+      
+      // Si le groupe correspond ou s'il contient des liens qui correspondent
+      if (groupeMatches || filteredLiens.length > 0) {
+        return {
+          ...groupe,
+          // Si le groupe correspond, afficher tous les liens
+          // Sinon, n'afficher que les liens qui correspondent
+          liens: groupeMatches ? groupe.liens : filteredLiens,
+          // Flag pour indiquer si le groupe lui-même correspond à la recherche
+          // Utilisé pour l'affichage visuel
+          _matchesSearch: groupeMatches
+        };
+      }
+      
+      // Ne pas inclure les groupes qui ne correspondent pas
+      return null;
+    }).filter(Boolean) as Groupe[];
+  }, [groupes, searchTerm]);
+
   if (groupes.length === 0) {
     return (
       <div className="text-center py-10">
         <p className="text-gray-500">Aucun groupe créé. Créez votre premier groupe pour commencer.</p>
+      </div>
+    );
+  }
+  
+  if (filteredGroupes.length === 0 && searchTerm) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-500">Aucun résultat pour "{searchTerm}".</p>
       </div>
     );
   }
@@ -61,7 +105,7 @@ export function ListeGroupes({
               ref={provided.innerRef}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {groupes.sort((a, b) => a.ordre - b.ordre).map((groupe, index) => (
+              {filteredGroupes.sort((a, b) => a.ordre - b.ordre).map((groupe, index) => (
                 <Draggable key={groupe.id} draggableId={groupe.id} index={index}>
                   {(provided: DraggableProvided) => (
                     <div

@@ -19,6 +19,7 @@ function App() {
   const [isAjoutGroupeOpen, setIsAjoutGroupeOpen] = useState(false)
   const [isAjoutLienOpen, setIsAjoutLienOpen] = useState(false)
   const [groupeIdPourAjoutLien, setGroupeIdPourAjoutLien] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
   
   const handleAjouterGroupe = (groupe: Omit<Groupe, 'id' | 'ordre'>) => {
     const nouvelOrdre = data.groupes.length > 0 
@@ -123,10 +124,18 @@ function App() {
     })
   }
   
+  const handleSearch = (term: string) => {
+    setSearchTerm(term)
+  }
+  
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className='flex flex-col h-screen'>
-        <HeaderApp onAjoutGroupe={() => setIsAjoutGroupeOpen(true)} />
+        <HeaderApp 
+          onAjoutGroupe={() => setIsAjoutGroupeOpen(true)} 
+          onSearch={handleSearch}
+          searchTerm={searchTerm}
+        />
         
         <main className='flex-1 p-4 overflow-auto'>
           <ListeGroupes 
@@ -137,6 +146,7 @@ function App() {
             onAjouterLien={handleAjouterLien}
             onModifierLien={handleModifierLien}
             onSupprimerLien={handleSupprimerLien}
+            searchTerm={searchTerm}
           />
         </main>
         
