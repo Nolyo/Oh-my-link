@@ -16,6 +16,7 @@ const initialData: AppData = {
 function App() {
   const [data, setData] = useLocalStorage<AppData>('bookmark-app-data', initialData)
   const [isAjoutGroupeOpen, setIsAjoutGroupeOpen] = useState(false)
+  const [groupeIdPourAjoutLien, setGroupeIdPourAjoutLien] = useState<string | null>(null)
   
   const handleAjouterGroupe = (groupe: Omit<Groupe, 'id' | 'ordre'>) => {
     const nouvelOrdre = data.groupes.length > 0 
@@ -34,6 +35,35 @@ function App() {
     })
   }
   
+  const handleModifierGroupe = (id: string, updates: Partial<Groupe>) => {
+    const groupesModifies = data.groupes.map(groupe => 
+      groupe.id === id 
+        ? { ...groupe, ...updates } 
+        : groupe
+    )
+    
+    setData({
+      ...data,
+      groupes: groupesModifies
+    })
+  }
+  
+  const handleSupprimerGroupe = (id: string) => {
+    const groupesFiltres = data.groupes.filter(groupe => groupe.id !== id)
+    
+    setData({
+      ...data,
+      groupes: groupesFiltres
+    })
+  }
+  
+  const handleAjouterLien = (groupeId: string) => {
+    // Pour l'instant, on enregistre juste l'ID du groupe pour l'implémentation future
+    setGroupeIdPourAjoutLien(groupeId)
+    // Cette fonction sera complétée plus tard pour ouvrir une modal d'ajout de lien
+    console.log(`Ajouter un lien au groupe: ${groupeId}`)
+  }
+  
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className='flex flex-col h-screen'>
@@ -43,6 +73,9 @@ function App() {
           <ListeGroupes 
             groupes={data.groupes} 
             onUpdateGroupes={(nouveauxGroupes: Groupe[]) => setData({...data, groupes: nouveauxGroupes})}
+            onModifierGroupe={handleModifierGroupe}
+            onSupprimerGroupe={handleSupprimerGroupe}
+            onAjouterLien={handleAjouterLien}
           />
         </main>
         
