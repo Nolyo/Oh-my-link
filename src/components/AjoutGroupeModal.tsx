@@ -16,10 +16,9 @@ interface AjoutGroupeModalProps {
   isOpen: boolean
   onClose: () => void
   onAjouter: (groupe: Omit<Groupe, 'id' | 'ordre'>) => void
-  groupes: Groupe[]
 }
 
-export function AjoutGroupeModal({ isOpen, onClose, onAjouter, groupes }: AjoutGroupeModalProps) {
+export function AjoutGroupeModal({ isOpen, onClose, onAjouter }: AjoutGroupeModalProps) {
   const [titre, setTitre] = useState('')
   const [logo, setLogo] = useState('')
 
