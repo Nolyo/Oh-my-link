@@ -36,6 +36,17 @@ export function AjoutLienModal({
 
   const groupe = groupes.find(g => g.id === groupeId)
 
+  // Extraire le domaine d'une URL pour construire le lien vers le favicon
+  const extractDomain = (url: string): string => {
+    try {
+      const parsedUrl = new URL(url);
+      return `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+    } catch (error) {
+      // Si l'URL n'est pas valide, retourner l'URL d'origine
+      return url;
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -53,6 +64,10 @@ export function AjoutLienModal({
     
     if (logo.trim()) {
       nouveauLien.logo = logo.trim()
+    } else {
+      // Si aucun logo n'est fourni, utiliser le favicon du site
+      const domain = extractDomain(url.trim());
+      nouveauLien.logo = `${domain}/favicon.ico`;
     }
     
     onAjouter(groupeId, nouveauLien)
