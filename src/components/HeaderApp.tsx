@@ -1,6 +1,7 @@
 import { Button } from './ui/button';
 import { PlusCircle, Search } from 'lucide-react';
 import { Input } from './ui/input';
+import { ImportExportMenu } from './ImportExportMenu';
 
 interface HeaderAppProps {
   onAjoutGroupe: () => void;
@@ -29,6 +30,7 @@ export function HeaderApp({ onAjoutGroupe, onSearch, searchTerm }: HeaderAppProp
             <PlusCircle size={16} />
             Ajouter un groupe
           </Button>
+          <ImportExportMenu />
         </div>
       </div>
     </header>

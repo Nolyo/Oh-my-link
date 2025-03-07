@@ -8,6 +8,7 @@ import { AjoutLienModal } from './components/AjoutLienModal'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { AppData, Groupe, Lien } from './types'
 import { v4 as uuidv4 } from 'uuid'
+import { Toaster } from './components/ui/toaster'
 
 const initialData: AppData = {
   groupes: []
@@ -165,6 +166,7 @@ function App() {
           groupes={data.groupes}
         />
         
+        <Toaster />
       </div>
     </ThemeProvider>
   )
