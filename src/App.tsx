@@ -155,7 +155,6 @@ function App() {
           isOpen={isAjoutGroupeOpen}
           onClose={() => setIsAjoutGroupeOpen(false)}
           onAjouter={handleAjouterGroupe}
-          groupes={data.groupes}
         />
         
         <AjoutLienModal

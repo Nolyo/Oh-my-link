@@ -29,12 +29,14 @@ export function ModifierLienModal({
   const [titre, setTitre] = useState('')
   const [description, setDescription] = useState('')
   const [url, setUrl] = useState('')
+  const [logo, setLogo] = useState('')
   
   useEffect(() => {
     if (lien) {
       setTitre(lien.titre)
       setDescription(lien.description || '')
       setUrl(lien.url)
+      setLogo(lien.logo || '')
     }
   }, [lien])
 
@@ -52,6 +54,12 @@ export function ModifierLienModal({
       updates.description = description.trim()
     } else {
       updates.description = undefined
+    }
+    
+    if (logo.trim()) {
+      updates.logo = logo.trim()
+    } else {
+      updates.logo = undefined
     }
     
     onModifier(lien.id, updates)
@@ -108,6 +116,18 @@ export function ModifierLienModal({
                 className="col-span-3"
                 placeholder="Description du lien (optionnel)"
                 rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="logo" className="text-right">
+                Logo URL
+              </Label>
+              <Input
+                id="logo"
+                value={logo}
+                onChange={(e) => setLogo(e.target.value)}
+                className="col-span-3"
+                placeholder="https://exemple.com/logo.png"
               />
             </div>
           </div>

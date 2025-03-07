@@ -3,6 +3,7 @@ export interface Lien {
   titre: string;
   description?: string;
   url: string;
+  logo?: string;
 }
 
 export interface Groupe {

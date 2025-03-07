@@ -27,7 +27,24 @@ export function LienItem({ lien, onModifier, onSupprimer }: LienItemProps) {
             rel="noopener noreferrer"
             className="flex items-start gap-2 flex-1"
           >
-            <ExternalLink size={16} className="mt-1 flex-shrink-0" />
+            {lien.logo ? (
+              <img 
+                src={lien.logo} 
+                alt="Logo" 
+                className="w-4 h-4 mt-1 flex-shrink-0 object-contain" 
+                onError={(e) => {
+                  // Remplace par une icône par défaut en cas d'erreur de chargement
+                  e.currentTarget.src = '';
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextSibling.style.display = 'block';
+                }}
+              />
+            ) : null}
+            <ExternalLink 
+              size={16} 
+              className="mt-1 flex-shrink-0" 
+              style={{ display: lien.logo ? 'none' : 'block' }} 
+            />
             <div className="flex-1">
               <h3 className="font-medium text-sm">{lien.titre}</h3>
               {lien.description && (

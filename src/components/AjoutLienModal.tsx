@@ -32,6 +32,7 @@ export function AjoutLienModal({
   const [titre, setTitre] = useState('')
   const [description, setDescription] = useState('')
   const [url, setUrl] = useState('')
+  const [logo, setLogo] = useState('')
 
   const groupe = groupes.find(g => g.id === groupeId)
 
@@ -50,6 +51,10 @@ export function AjoutLienModal({
       nouveauLien.description = description.trim()
     }
     
+    if (logo.trim()) {
+      nouveauLien.logo = logo.trim()
+    }
+    
     onAjouter(groupeId, nouveauLien)
     resetForm()
   }
@@ -58,6 +63,7 @@ export function AjoutLienModal({
     setTitre('')
     setDescription('')
     setUrl('')
+    setLogo('')
     onClose()
   }
 
@@ -111,6 +117,18 @@ export function AjoutLienModal({
                 className="col-span-3"
                 placeholder="Description du lien (optionnel)"
                 rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="logo" className="text-right">
+                Logo URL
+              </Label>
+              <Input
+                id="logo"
+                value={logo}
+                onChange={(e) => setLogo(e.target.value)}
+                className="col-span-3"
+                placeholder="https://exemple.com/logo.png"
               />
             </div>
           </div>
