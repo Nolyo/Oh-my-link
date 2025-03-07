@@ -1,54 +1,17 @@
-# React + TypeScript + Vite
+Cette app doit me permettre de stocker et de visualiser mes url importantes.
+Je dois pouvoir en ajouter, supprimer, modifier.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Structure:
+On doit pouvoir créer un/des groupe(s) (optional) 
 
-Currently, two official plugins are available:
+Dans un groupe on peut ajouter un/des liens
+Un groupe à un titre et un logo (url) et un order
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Chaque lien a un titre, une description (optional) et url 
+Je pense stocker ca dans un fichier JSON ? mieux a proposer ?
 
-## Expanding the ESLint configuration
+Il faut faire des composant et separé tout proprement pour avoir un code pro.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+L'edition / ajout de lien sera dans une modal
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+L'affichage du rendu des lien doit etre beau et pratique a utiliser. L'ajout des liens / groupe doit etre plus discret car moin utilisé
