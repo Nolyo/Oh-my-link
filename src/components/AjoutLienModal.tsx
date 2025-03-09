@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
-import { Lien, Groupe } from '../types'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Textarea } from './ui/textarea'
+import { useState } from "react";
+import { Lien, Groupe } from "../types";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -11,30 +11,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog'
-import { v4 as uuidv4 } from 'uuid'
+} from "./ui/dialog";
+import { v4 as uuidv4 } from "uuid";
 
 interface AjoutLienModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onAjouter: (groupeId: string, lien: Lien) => void
-  groupeId: string | null
-  groupes: Groupe[]
+  isOpen: boolean;
+  onClose: () => void;
+  onAjouter: (groupeId: string, lien: Lien) => void;
+  groupeId: string | null;
+  groupes: Groupe[];
 }
 
-export function AjoutLienModal({ 
-  isOpen, 
-  onClose, 
-  onAjouter, 
+export function AjoutLienModal({
+  isOpen,
+  onClose,
+  onAjouter,
   groupeId,
-  groupes
+  groupes,
 }: AjoutLienModalProps) {
-  const [titre, setTitre] = useState('')
-  const [description, setDescription] = useState('')
-  const [url, setUrl] = useState('')
-  const [logo, setLogo] = useState('')
+  const [titre, setTitre] = useState("");
+  const [description, setDescription] = useState("");
+  const [url, setUrl] = useState("");
+  const [logo, setLogo] = useState("");
 
-  const groupe = groupes.find(g => g.id === groupeId)
+  const groupe = groupes.find((g) => g.id === groupeId);
 
   // Extraire le domaine d'une URL pour construire le lien vers le favicon
   const extractDomain = (url: string): string => {
@@ -48,23 +48,24 @@ export function AjoutLienModal({
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!groupeId || !titre.trim() || !url.trim()) return
+    e.preventDefault();
+
+    if (!groupeId || !titre.trim() || !url.trim()) return;
 
     const nouveauLien: Lien = {
       id: uuidv4(),
       titre: titre.trim(),
       url: url.trim(),
-    }
-    
+    };
+
     if (description.trim()) {
-      nouveauLien.description = description.trim()
+      nouveauLien.description = description.trim();
     }
-    
+
     // Icône par défaut en SVG pour les cas où le favicon n'existe pas (optimisée pour le mode dark)
-    const defaultIcon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1saW5rIj48cGF0aCBkPSJNMTAgMTNhNSA1IDAgMCAwIDcuNSAwTTkgMTFoMTAiLz48Y2lyY2xlIGN4PSI5IiBjeT0iMTIiIHI9IjIiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjEyIiByPSIyIi8+PC9zdmc+Jzs=';
-    
+    const defaultIcon =
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1saW5rIj48cGF0aCBkPSJNMTAgMTNhNSA1IDAgMCAwIDcuNSAwTTkgMTFoMTAiLz48Y2lyY2xlIGN4PSI5IiBjeT0iMTIiIHI9IjIiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjEyIiByPSIyIi8+PC9zdmc+Jzs=";
+
     if (logo.trim()) {
       // Utiliser le logo spécifié par l'utilisateur
       nouveauLien.logo = logo.trim();
@@ -75,38 +76,38 @@ export function AjoutLienModal({
       // Si aucun logo n'est fourni, vérifier d'abord si le favicon existe
       const domain = extractDomain(url.trim());
       const faviconUrl = `${domain}/favicon.ico`;
-      
+
       // Vérifier si le favicon existe avant d'ajouter le lien
       const img = new Image();
-      
+
       img.onload = () => {
         // Le favicon existe, l'utiliser
         nouveauLien.logo = faviconUrl;
         onAjouter(groupeId, nouveauLien);
         resetForm();
       };
-      
+
       img.onerror = () => {
         // Le favicon n'existe pas, utiliser l'icône par défaut
         nouveauLien.logo = defaultIcon;
         onAjouter(groupeId, nouveauLien);
         resetForm();
       };
-      
+
       // Démarrer le chargement de l'image pour vérification
       img.src = faviconUrl;
     }
-  }
+  };
 
   const resetForm = () => {
-    setTitre('')
-    setDescription('')
-    setUrl('')
-    setLogo('')
-    onClose()
-  }
+    setTitre("");
+    setDescription("");
+    setUrl("");
+    setLogo("");
+    onClose();
+  };
 
-  if (!groupeId || !groupe) return null
+  if (!groupeId || !groupe) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -180,5 +181,5 @@ export function AjoutLienModal({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
