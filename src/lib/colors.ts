@@ -22,41 +22,57 @@ export function getTextColorForBackground(bgColor: string | undefined): string {
 
   // Liste des couleurs foncées qui nécessitent un texte clair
   const darkBackgrounds = [
+    // Couleurs de base
+    "bg-slate-700",
+    "bg-gray-700",
+    "bg-zinc-800",
+
     // Couleurs bleues
     "bg-blue-500",
     "bg-blue-600",
     "bg-blue-700",
     "bg-blue-800",
     "bg-blue-900",
+
     // Couleurs vertes
     "bg-green-500",
     "bg-green-600",
     "bg-green-700",
     "bg-green-800",
     "bg-green-900",
+
     // Couleurs violettes
     "bg-purple-500",
     "bg-purple-600",
     "bg-purple-700",
     "bg-purple-800",
     "bg-purple-900",
+
     // Couleurs rouges
     "bg-red-500",
     "bg-red-600",
     "bg-red-700",
     "bg-red-800",
     "bg-red-900",
+
     // Couleurs grises
     "bg-gray-600",
     "bg-gray-700",
     "bg-gray-800",
     "bg-gray-900",
-    // Noir et ardoise
-    "bg-black",
+
+    // Couleurs zinc/slate
+    "bg-zinc-600",
+    "bg-zinc-700",
+    "bg-zinc-800",
+    "bg-zinc-900",
+    "bg-slate-600",
     "bg-slate-700",
     "bg-slate-800",
     "bg-slate-900",
+
     // Autres couleurs
+    "bg-black",
     "bg-pink-500",
     "bg-pink-600",
     "bg-indigo-500",
@@ -69,7 +85,6 @@ export function getTextColorForBackground(bgColor: string | undefined): string {
     "bg-teal-600",
     "bg-orange-500",
     "bg-orange-600",
-    // Autres couleurs foncées si nécessaire
   ];
 
   // Si c'est une couleur claire, utilisez du texte foncé
