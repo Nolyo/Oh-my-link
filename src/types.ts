@@ -10,6 +10,7 @@ export interface Groupe {
   id: string;
   titre: string;
   logo?: string;
+  couleur?: string;
   ordre: number;
   liens: Lien[];
 }

@@ -1,35 +1,40 @@
-import { Groupe, Lien } from '../types';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Plus, MoreVertical, Pencil, Trash2 } from 'lucide-react';
-import { LienItem } from './LienItem';
+import { Groupe, Lien } from "../types";
+import { Card, CardContent, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Plus, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { LienItem } from "./LienItem";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { useState } from 'react';
-import { ModifierLienModal } from './ModifierLienModal';
-import { ConfirmDialog } from './ConfirmDialog';
+} from "./ui/dropdown-menu";
+import { useState } from "react";
+import { ModifierLienModal } from "./ModifierLienModal";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { getTextColorForBackground } from "../lib/colors";
 
 interface GroupeCardProps {
   groupe: Groupe;
   onAddLien?: () => void;
   onModifier?: (groupe: Groupe) => void;
   onSupprimer?: (groupe: Groupe) => void;
-  onModifierLien?: (groupeId: string, lienId: string, updates: Partial<Lien>) => void;
+  onModifierLien?: (
+    groupeId: string,
+    lienId: string,
+    updates: Partial<Lien>
+  ) => void;
   onSupprimerLien?: (groupeId: string, lienId: string) => void;
 }
 
-export function GroupeCard({ 
-  groupe, 
-  onAddLien, 
-  onModifier, 
+export function GroupeCard({
+  groupe,
+  onAddLien,
+  onModifier,
   onSupprimer,
   onModifierLien,
-  onSupprimerLien
+  onSupprimerLien,
 }: GroupeCardProps) {
   const [lienAModifier, setLienAModifier] = useState<Lien | null>(null);
   const [lienASupprimer, setLienASupprimer] = useState<Lien | null>(null);
@@ -57,53 +62,76 @@ export function GroupeCard({
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <div className="flex items-center gap-2">
-          {groupe.logo && (
-            <img src={groupe.logo} alt={groupe.titre} className="w-6 h-6 object-contain" />
-          )}
-          <CardTitle>{groupe.titre}</CardTitle>
+    <Card className="h-full flex flex-col p-0 overflow-hidden">
+      <div
+        className={`w-full ${
+          groupe.couleur || "bg-slate-700"
+        } ${getTextColorForBackground(groupe.couleur || "bg-slate-700")}`}
+      >
+        <div className="flex flex-row items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2">
+            {groupe.logo && (
+              <img
+                src={groupe.logo}
+                alt={groupe.titre}
+                className="w-6 h-6 object-contain"
+              />
+            )}
+            <CardTitle>{groupe.titre}</CardTitle>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-8 w-8 ${getTextColorForBackground(
+                groupe.couleur || "bg-slate-700"
+              )} hover:bg-black/10 dark:hover:bg-white/10`}
+              onClick={onAddLien}
+            >
+              <Plus size={16} />
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-8 w-8 ${getTextColorForBackground(
+                    groupe.couleur || "bg-slate-700"
+                  )} hover:bg-black/10 dark:hover:bg-white/10`}
+                >
+                  <MoreVertical size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem
+                  className="cursor-pointer flex items-center gap-2"
+                  onClick={() => onModifier?.(groupe)}
+                >
+                  <Pencil size={14} />
+                  <span>Modifier</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer text-red-500 flex items-center gap-2"
+                  onClick={() => onSupprimer?.(groupe)}
+                >
+                  <Trash2 size={14} />
+                  <span>Supprimer</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onAddLien}>
-            <Plus size={16} />
-          </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical size={16} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem 
-                className="cursor-pointer flex items-center gap-2"
-                onClick={() => onModifier?.(groupe)}
-              >
-                <Pencil size={14} />
-                <span>Modifier</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="cursor-pointer text-red-500 flex items-center gap-2"
-                onClick={() => onSupprimer?.(groupe)}
-              >
-                <Trash2 size={14} />
-                <span>Supprimer</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <CardContent className="flex-1 pt-4">
         {groupe.liens.length === 0 ? (
           <p className="text-sm text-gray-500">Aucun lien dans ce groupe</p>
         ) : (
           <div className="space-y-2">
             {groupe.liens.map((lien) => (
-              <LienItem 
-                key={lien.id} 
+              <LienItem
+                key={lien.id}
                 lien={lien}
                 onModifier={handleModifierLien}
                 onSupprimer={handleSupprimerLien}
